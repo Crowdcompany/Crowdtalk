@@ -3,31 +3,6 @@
  * Nutzt @ricky0123/vad mit Silero VAD Model
  */
 
-// Dynamischer Import der VAD Library vom CDN
-let vad = null;
-
-async function loadVADLibrary() {
-    try {
-        // Importiere VAD als ES6 Module von CDN
-        const vadModule = await import('https://cdn.jsdelivr.net/npm/@ricky0123/vad/dist/index.browser.js');
-        vad = vadModule;
-        console.log('VAD Library geladen:', vad);
-        return true;
-    } catch (error) {
-        console.error('Fehler beim Laden der VAD Library:', error);
-        // Versuche lokalen Fallback
-        try {
-            const vadModule = await import('/assets/local/vad.browser.js');
-            vad = vadModule;
-            console.log('VAD Library lokal geladen:', vad);
-            return true;
-        } catch (localError) {
-            console.error('Fehler beim Laden der lokalen VAD Library:', localError);
-            return false;
-        }
-    }
-}
-
 export class VADManager {
     constructor(options = {}) {
         this.vadInstance = null;
@@ -38,20 +13,24 @@ export class VADManager {
 
     async init() {
         try {
-            console.log('Lade VAD Library...');
+            console.log('Initialisiere VAD...');
 
-            // Lade VAD Library falls noch nicht geladen
-            if (!vad) {
-                const loaded = await loadVADLibrary();
-                if (!loaded) {
-                    throw new Error('VAD Library konnte nicht geladen werden');
-                }
+            // Warte kurz bis das globale vad Objekt geladen ist
+            let retries = 0;
+            while (typeof window.vad === 'undefined' && retries < 50) {
+                console.log(`Warte auf VAD Library... (${retries + 1}/50)`);
+                await new Promise(resolve => setTimeout(resolve, 100));
+                retries++;
             }
 
-            console.log('Erstelle MicVAD Instanz...');
+            if (typeof window.vad === 'undefined') {
+                throw new Error('VAD Library nicht geladen nach 5 Sekunden');
+            }
+
+            console.log('VAD Library gefunden:', window.vad);
 
             // Erstelle MicVAD Instanz
-            this.vadInstance = await vad.MicVAD.new({
+            this.vadInstance = await window.vad.MicVAD.new({
                 onSpeechStart: () => {
                     console.log('VAD: Sprache gestartet');
                     this.onSpeechStart();
