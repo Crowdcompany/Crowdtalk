@@ -8,12 +8,20 @@
 </head>
 <body>
     <div id="app">
-        <h1>Sprachassistent</h1>
-        <div id="version">v1.0.4</div>
-        <div id="status">Initialisiere...</div>
-        <button id="start-btn">Mikrofon aktivieren</button>
-        <div id="transcript"></div>
-        <div id="response"></div>
+        <div class="header">
+            <h1>Sprachassistent</h1>
+            <div id="version">v1.0.4</div>
+        </div>
+        <div id="status" class="info">Initialisiere...</div>
+        <div class="chat-container" id="chat-container">
+            <div class="empty-state">
+                <div class="empty-state-icon">🎤</div>
+                <div>Klicke auf Mikrofon aktivieren und starte eine Unterhaltung</div>
+            </div>
+        </div>
+        <div class="control-bar">
+            <button id="start-btn" disabled>Mikrofon aktivieren</button>
+        </div>
         <div id="debug"></div>
     </div>
 
