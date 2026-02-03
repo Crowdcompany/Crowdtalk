@@ -30,12 +30,6 @@ class App {
             this.ui.showDebug('Starte Initialisierung...');
             console.log('App wird initialisiert...');
 
-            // Prüfe ob VAD Library geladen ist
-            if (typeof vad === 'undefined') {
-                throw new Error('VAD Library nicht geladen. Bitte Seite neu laden.');
-            }
-            console.log('VAD Library ist geladen:', vad);
-
             const vadInitialized = await this.vad.init();
             if (!vadInitialized) {
                 this.ui.updateStatus('VAD Initialisierung fehlgeschlagen', 'error');
