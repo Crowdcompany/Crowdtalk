@@ -44,23 +44,26 @@ Beide Server müssen gleichzeitig laufen!
 
 ## Änderungsprotokoll (Changelog)
 
-### Version 1.0.2 - 2026-02-03
+### Version 1.0.3 - 2026-02-03
 
-**Status:** CORS-Problem gelöst
+**Status:** Intention-basierte Suche implementiert
 
 **Erstellt von:** Raimund
 
 **Änderungen:**
-- CORS-Problem identifiziert und gelöst
-- Lokaler Proxy-Server implementiert (proxy_server.py, Port 8001)
-- Proxy Manager angepasst (localhost:8001/api/chat)
-- Proxy-Server getestet und funktioniert (GLM 4.7 Antwort erhalten)
-- Start-Skripte für beide Server erstellt
+- Intention-basierte Suche implementiert (wie Crowdbot)
+- Proxy-Server um Such-Endpoints erweitert (Perplexity, JINA)
+- Intelligente Such-Entscheidung (automatische Wahl zwischen schnell und tiefgehend)
+- Frontend erweitert (_analyzeIntention, _performSearch)
+- Aktuelles Datum wird automatisch in Suchanfragen eingefügt
+- System-Prompt erweitert für Faktentreue bei Suchergebnissen
 
 **Funktionen:**
 - [x] VAD-basierte Spracherkennung
 - [x] Web Speech API Transkription
 - [x] GLM 4.7 Proxy Anbindung (Anthropic Format + CORS-Proxy)
+- [x] Intention-basierte Suche (Perplexity für schnelle Fakten, JINA für Deep Research)
+- [x] Aktuelles Datum wird automatisch eingefügt
 - [x] Text-Ausgabe als Popup
 - [x] Konversationshistorie (letzte 10 Nachrichten)
 - [x] Debug-Panel für Fehleranalyse
@@ -71,10 +74,14 @@ Beide Server müssen gleichzeitig laufen!
 - VAD-Library: @ricky0123/vad mit Silero VAD Model
 - Backend: Python (CORS-Proxy, HTTP-Server)
 - GLM 4.7 Proxy: https://glmproxy.ccpn.cc/v1/messages
+- Perplexity Proxy: https://ppproxy.ccpn.cc/chat/completions (schnelle Suche)
+- JINA Proxy: https://jinaproxy.ccpn.cc/v1/chat/completions (Deep Research)
 
 **Architektur-Entscheidungen:**
 - Lokaler CORS-Proxy notwendig für Browser-Anfragen
 - Zwei Server: HTTP-Server (8000) + Proxy-Server (8001)
+- Intention-basierte Suche: Keywords und "?" erkennen Such-Bedarf
+- Intelligente Such-Entscheidung: Perplexity (schnell) vs JINA (tiefgehend)
 - Frontend muss lokal UND auf AWS S3 ohne Backend-Server funktionieren
 - CDN mit lokalem Fallback für VAD-Modelle
 - Keine API-Keys im Frontend
