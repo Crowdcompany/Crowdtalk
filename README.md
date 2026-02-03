@@ -2,13 +2,100 @@
 
 Kostengünstiger Sprachassistent (< 2 Cent/Minute) mit automatischer Spracherkennung, Barge-In-Funktionalität und Proxy-basierter KI-Anbindung.
 
+## Schnellstart
+
+```bash
+# Terminal 1: Proxy-Server starten (CORS-Proxy für GLM 4.7)
+./start_proxy.sh
+
+# Terminal 2: HTTP-Server starten
+./start_server.sh
+
+# Browser öffnen: http://localhost:8000
+```
+
+## Server steuern
+
+### Proxy-Server (Port 8001)
+```bash
+# Starten
+./start_proxy.sh
+
+# Stoppen
+kill $(cat logs/proxy.pid)
+
+# Status
+ps aux | grep proxy_server
+```
+
+### HTTP-Server (Port 8000)
+```bash
+# Starten
+./start_server.sh
+
+# Stoppen
+kill $(cat logs/server.pid)
+
+# Status
+ps aux | grep "python3 -m http.server"
+```
+
+Beide Server müssen gleichzeitig laufen!
+
 ## Änderungsprotokoll (Changelog)
+
+### Version 1.0.2 - 2026-02-03
+
+**Status:** CORS-Problem gelöst
+
+**Erstellt von:** Raimund
+
+**Änderungen:**
+- CORS-Problem identifiziert und gelöst
+- Lokaler Proxy-Server implementiert (proxy_server.py, Port 8001)
+- Proxy Manager angepasst (localhost:8001/api/chat)
+- Proxy-Server getestet und funktioniert (GLM 4.7 Antwort erhalten)
+- Start-Skripte für beide Server erstellt
+
+**Funktionen:**
+- [x] VAD-basierte Spracherkennung
+- [x] Web Speech API Transkription
+- [x] GLM 4.7 Proxy Anbindung (Anthropic Format + CORS-Proxy)
+- [x] Text-Ausgabe als Popup
+- [x] Konversationshistorie (letzte 10 Nachrichten)
+- [x] Debug-Panel für Fehleranalyse
+- [x] Server-Logging nach logs/
+
+**Technologie-Stack:**
+- Frontend: JavaScript (Web Speech API, VAD)
+- VAD-Library: @ricky0123/vad mit Silero VAD Model
+- Backend: Python (CORS-Proxy, HTTP-Server)
+- GLM 4.7 Proxy: https://glmproxy.ccpn.cc/v1/messages
+
+**Architektur-Entscheidungen:**
+- Lokaler CORS-Proxy notwendig für Browser-Anfragen
+- Zwei Server: HTTP-Server (8000) + Proxy-Server (8001)
+- Frontend muss lokal UND auf AWS S3 ohne Backend-Server funktionieren
+- CDN mit lokalem Fallback für VAD-Modelle
+- Keine API-Keys im Frontend
+
+**Offene Punkte:**
+- [ ] Browser-Testing (mit funktionierendem Proxy)
+- [ ] Phase 2: TTS-Ausgabe mit Barge-In
+- [ ] Phase 3: Such-Proxy und JINA-Proxy Integration
+- [ ] Phase 4: Docker-Deployment für Coolify
+
+**Nächste Schritte:**
+- [x] CORS-Problem gelöst
+- [x] Proxy-Server getestet
+- [ ] Browser-Testing mit Mikrofon
+- [ ] Phase 2 Planung
+
+---
 
 ### Version 1.0.1 - 2026-02-03
 
 **Status:** Phase 1 MVP Implementiert
-
-**Erstellt von:** Raimund
 
 **Änderungen:**
 - Proxy-Endpoints analysiert (GLM, Perplexity, JINA aus Crowdbot)
@@ -20,40 +107,17 @@ Kostengünstiger Sprachassistent (< 2 Cent/Minute) mit automatischer Spracherken
 - Hauptanwendung (app.js) mit Konversationshistorie
 - HTTP-Server mit Logging gestartet (Port 8000, PID 116095)
 
-**Funktionen:**
-- [x] VAD-basierte Spracherkennung
-- [x] Web Speech API Transkription
-- [x] GLM 4.7 Proxy Anbindung (Anthropic Format)
-- [x] Text-Ausgabe als Popup
-- [x] Konversationshistorie (letzte 10 Nachrichten)
-- [x] Debug-Panel für Fehleranalyse
-- [x] Server-Logging nach logs/
+---
 
-**Technologie-Stack:**
-- Frontend: JavaScript (Web Speech API, VAD)
-- VAD-Library: @ricky0123/vad mit Silero VAD Model
-- Backend-Optional: Python (für Docker-Hosting)
-- Deployment: Docker mit Coolify
+### Version 1.0.0 - 2026-02-03
 
-**Architektur-Entscheidungen:**
-- Frontend muss lokal UND auf AWS S3 ohne Backend-Server funktionieren
-- Drei Proxy-Server: GLM 4.7 (KI), JINA (Recherche), Such-Proxy
-- CDN mit lokalem Fallback für VAD-Modelle
-- Kein CORS, keine API-Keys im Frontend
+**Status:** Initial-Planung
 
-**Offene Punkte:**
-- [ ] Phase 1 Implementierung: MVP mit VAD und Web Speech API
-- [ ] Phase 2: TTS-Ausgabe mit Barge-In
-- [ ] Phase 3: Such-Proxy und JINA-Proxy Integration
-- [ ] Phase 4: Docker-Deployment für Coolify
-
-**Nächste Schritte:**
-- [x] Architektur-Dokumentation erstellt (ARCHITEKTUR.md)
-- [x] Erste HTML-Seite mit VAD und Web Speech API
-- [x] GLM 4.7 Proxy angebinden (Anthropic API Format)
-- [x] Text-Ausgabe als Popup implementiert
-- [ ] Browser-Testing (Mikrofon-Permission, CORS)
-- [ ] Phase 2: TTS-Ausgabe mit Barge-In
+**Änderungen:**
+- Projektinitialisierung und Anforderungsanalyse
+- README.md als versionierte Log-Datei erstellt (v1.0.0)
+- CLAUDE.md mit Projektrichtlinien erstellt
+- Anforderungsdokumentation in .plan erstellt
 
 ---
 
@@ -71,15 +135,14 @@ Kostengünstiger Sprachassistent (< 2 Cent/Minute) mit automatischer Spracherken
 - @ricky0123/vad für Voice Activity Detection (Silero VAD Model)
 - Einfache HTML/CSS (Stabilität > Design)
 
-### Backend (optional)
-- Python mit virtueller Umgebung
-- Proxy-Server für KI und Suche
-- Docker mit Coolify für Hosting
+### Backend (lokal)
+- Python CORS-Proxy für GLM 4.7 Anfragen
+- Python HTTP-Server für statische Files
 
 ### API-Proxys
-- **GLM 4.7 Proxy:** Haupt-KI für Chat
-- **JINA Proxy:** Tiefgehende Recherchen
-- **Such-Proxy:** Internetsuchen
+- **GLM 4.7 Proxy:** Haupt-KI für Chat (https://glmproxy.ccpn.cc/v1/messages)
+- **JINA Proxy:** Tiefgehende Recherchen (https://jinaproxy.ccpn.cc/v1/chat/completions)
+- **Such-Proxy:** Internetsuchen (https://ppproxy.ccpn.cc/chat/completions)
 
 Alle Proxys haben serverseitige API-Keys - keine Keys im Frontend!
 
@@ -91,6 +154,7 @@ Alle Proxys haben serverseitige API-Keys - keine Keys im Frontend!
 | Python Audio-Bibliotheken (pydub/pyaudio) Probleme | Browser-basierte Lösung mit VAD |
 | Web Speech API 30-Sekunden-Limit | VAD überwacht kontinuierlich, Web Speech API nur für Transkription |
 | Barge-In während AI-Ausgabe | VAD erkennt Spracheingabe, stoppt TTS sofort |
+| CORS verhindert Browser-Anfragen an GLM Proxy | Lokaler Python Proxy-Server mit CORS-Headern |
 
 ## Entwicklungsphase
 
@@ -101,6 +165,7 @@ Alle Proxys haben serverseitige API-Keys - keine Keys im Frontend!
 - [x] Einfache HTML-Seite mit VAD
 - [x] Web Speech API Integration
 - [x] GLM 4.7 Proxy anbinden (Anthropic Format)
+- [x] CORS-Proxy implementiert
 - [x] Text-Ausgabe als Popup
 - [x] HTTP-Server mit Logging
 - [ ] Browser-Testing

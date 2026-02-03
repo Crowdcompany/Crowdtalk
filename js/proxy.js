@@ -4,7 +4,7 @@
  */
 
 export class ProxyManager {
-    constructor(proxyUrl = "https://glmproxy.ccpn.cc/v1/messages") {
+    constructor(proxyUrl = "http://localhost:8001/api/chat") {
         this.proxyUrl = proxyUrl;
     }
 
