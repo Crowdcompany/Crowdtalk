@@ -1,6 +1,6 @@
 /**
  * Sprachassistent - Hauptanwendung
- * Version 1.0.0
+ * Version 1.0.3
  */
 
 import { VADManager } from './vad.js';
@@ -25,42 +25,70 @@ class App {
     }
 
     async init() {
-        this.ui.updateStatus('Initialisiere VAD...');
-        this.ui.showDebug('Starte Initialisierung...');
+        try {
+            this.ui.updateStatus('Initialisiere VAD...');
+            this.ui.showDebug('Starte Initialisierung...');
+            console.log('App wird initialisiert...');
 
-        const vadInitialized = await this.vad.init();
-        if (!vadInitialized) {
-            this.ui.updateStatus('VAD Initialisierung fehlgeschlagen', 'error');
-            this.ui.showError('VAD konnte nicht initialisiert werden');
-            return;
+            // Prüfe ob VAD Library geladen ist
+            if (typeof vad === 'undefined') {
+                throw new Error('VAD Library nicht geladen. Bitte Seite neu laden.');
+            }
+            console.log('VAD Library ist geladen:', vad);
+
+            const vadInitialized = await this.vad.init();
+            if (!vadInitialized) {
+                this.ui.updateStatus('VAD Initialisierung fehlgeschlagen', 'error');
+                this.ui.showError('VAD konnte nicht initialisiert werden');
+                this.ui.showDebug('VAD Init fehlgeschlagen');
+                return;
+            }
+
+            this.ui.showDebug('VAD initialisiert');
+            console.log('VAD initialisiert');
+
+            const speechInitialized = this.speech.init();
+            if (!speechInitialized) {
+                this.ui.updateStatus('Web Speech API nicht unterstützt', 'error');
+                this.ui.showError('Dein Browser unterstützt die Web Speech API nicht');
+                this.ui.showDebug('Web Speech API nicht verfügbar');
+                return;
+            }
+
+            this.ui.showDebug('Web Speech API initialisiert');
+            console.log('Web Speech API initialisiert');
+
+            this.ui.updateStatus('Bereit. Mikrofon aktivieren um zu starten.');
+            this.ui.setStartButtonEnabled(true);
+
+            document.getElementById('start-btn').addEventListener('click', () => {
+                console.log('Mikrofon Button geklickt');
+                this.startListening();
+            });
+
+            this.ui.showDebug('Bereit für Eingaben. Version: 1.0.3');
+            console.log('App initialisierung abgeschlossen');
+
+        } catch (error) {
+            console.error('Fehler bei Initialisierung:', error);
+            this.ui.updateStatus('Fehler bei Initialisierung', 'error');
+            this.ui.showError(error.message);
+            this.ui.showDebug(`Init Error: ${error.message}`);
         }
-
-        this.ui.showDebug('VAD initialisiert');
-
-        const speechInitialized = this.speech.init();
-        if (!speechInitialized) {
-            this.ui.updateStatus('Web Speech API nicht unterstützt', 'error');
-            this.ui.showError('Dein Browser unterstützt die Web Speech API nicht');
-            return;
-        }
-
-        this.ui.showDebug('Web Speech API initialisiert');
-
-        this.ui.updateStatus('Bereit. Mikrofon aktivieren um zu starten.');
-        this.ui.setStartButtonEnabled(true);
-
-        document.getElementById('start-btn').addEventListener('click', () => {
-            this.startListening();
-        });
-
-        this.ui.showDebug('Bereit für Eingaben');
     }
 
     startListening() {
-        this.vad.start();
-        this.ui.updateStatus('Höre zu... Sprich jetzt.', 'success');
-        this.ui.setStartButtonEnabled(false);
-        this.ui.showDebug('VAD gestartet - Mikrofon aktiv');
+        try {
+            console.log('Starte VAD...');
+            this.vad.start();
+            this.ui.updateStatus('Höre zu... Sprich jetzt.', 'success');
+            this.ui.setStartButtonEnabled(false);
+            this.ui.showDebug('VAD gestartet - Mikrofon aktiv');
+        } catch (error) {
+            console.error('Fehler beim Starten:', error);
+            this.ui.showError(`Fehler: ${error.message}`);
+            this.ui.showDebug(`Start Error: ${error.message}`);
+        }
     }
 
     handleSpeechStart() {
@@ -72,7 +100,6 @@ class App {
     handleSpeechEnd() {
         this.ui.showDebug('Sprache beendet');
         console.log('Sprache beendet');
-        // Warte auf Transkriptionsergebnis
     }
 
     async handleTranscript(transcript) {
@@ -127,6 +154,7 @@ class App {
 
 // App starten
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('DOM geladen, starte App...');
     const app = new App();
     await app.init();
 });
