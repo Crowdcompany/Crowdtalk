@@ -17,13 +17,14 @@
         <div id="debug"></div>
     </div>
 
-    <!-- ONNX Runtime Web -->
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
+    <!-- ONNX Runtime Web mit lokalem Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"
+            onerror="this.src='/assets/local/ort.js'"></script>
 
-    <!-- VAD Library lokal -->
-    <script src="assets/vad.browser.js"></script>
+    <!-- VAD Library mit lokalem Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad/dist/index.browser.js"
+            onerror="this.src='/assets/local/vad.browser.js'"></script>
 
-    <!-- App als Module -->
     <script type="module" src="js/app.js?v=1.0.3"></script>
 </body>
 </html>
