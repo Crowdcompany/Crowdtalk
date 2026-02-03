@@ -1,6 +1,6 @@
 /**
  * UI Manager - Benutzeroberfläche
- * Version 1.0.4 - Chat-Interface
+ * Version 1.0.5 - Kompaktes Layout
  */
 
 export class UIManager {

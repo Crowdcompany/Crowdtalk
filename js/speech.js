@@ -30,7 +30,20 @@ export class SpeechRecognitionManager {
 
         this.recognition.onerror = (event) => {
             console.error('Speech Recognition Error:', event.error);
-            this.onError(event.error);
+
+            // Detaillierte Fehlermeldungen
+            let errorMessage = event.error;
+            if (event.error === 'audio-capture') {
+                errorMessage = 'Mikrofon nicht verfügbar. Bitte prüfe ob es von einer anderen App verwendet wird.';
+            } else if (event.error === 'not-allowed') {
+                errorMessage = 'Mikrofonzugriff verweigert. Bitte erlaube den Zugriff.';
+            } else if (event.error === 'no-speech') {
+                errorMessage = 'Keine Sprache erkannt. Bitte sprich lauter oder näher am Mikrofon.';
+            } else if (event.error === 'network') {
+                errorMessage = 'Netzwerkfehler. Bitte prüfe deine Internetverbindung.';
+            }
+
+            this.onError(errorMessage);
         };
 
         this.recognition.onend = () => {
