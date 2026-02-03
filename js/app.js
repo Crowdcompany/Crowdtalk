@@ -1,6 +1,6 @@
 /**
  * Sprachassistent - Hauptanwendung
- * Version 1.0.3
+ * Version 1.0.4
  */
 
 import { VADManager } from './vad.js';
@@ -126,7 +126,15 @@ class App {
 }
 
 // App starten
-document.addEventListener('DOMContentLoaded', async () => {
+// Da das Modul dynamisch geladen wird, ist DOMContentLoaded bereits gefeuert
+async function startApp() {
     const app = new App();
     await app.init();
-});
+}
+
+// Starte App sofort, da DOM bereits bereit ist (Modul wird nach DOMContentLoaded geladen)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}

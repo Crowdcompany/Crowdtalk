@@ -85,10 +85,10 @@ export class ProxyManager {
     }
 
     async _analyzeIntention(userMessage) {
-        """
-        Analysiert ob eine Suche benötigt wird.
-        Verwendet einfache Keyword-Erkennung (schneller als zusätzliche KI-Anfrage)
-        */
+        /**
+         * Analysiert ob eine Suche benötigt wird.
+         * Verwendet einfache Keyword-Erkennung (schneller als zusätzliche KI-Anfrage)
+         */
         const searchKeywords = [
             'wer ist', 'was ist', 'wie', 'warum', 'wann', 'wo',
             'aktuell', 'neueste', 'heute', 'gerade', 'jetzt',
@@ -115,7 +115,7 @@ export class ProxyManager {
     }
 
     async _performSearch(query) {
-        """Führt eine Suche durch (intelligente Wahl zwischen Perplexity und JINA)"""
+        /** Führt eine Suche durch (intelligente Wahl zwischen Perplexity und JINA) */
         try {
             const payload = {
                 query: query,
@@ -158,7 +158,7 @@ export class ProxyManager {
     }
 
     _combineMessageWithSearch(userMessage, searchResults) {
-        """Kombiniert Benutzerfrage mit Suchergebnissen"""
+        /** Kombiniert Benutzerfrage mit Suchergebnissen */
         const currentDate = new Date().toLocaleDateString('de-DE', {
             day: '2-digit',
             month: '2-digit',

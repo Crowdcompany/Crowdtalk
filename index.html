@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprachassistent MVP v1.0.3</title>
-    <link rel="stylesheet" href="css/styles.css?v=1.0.3">
+    <title>Sprachassistent MVP v1.0.4</title>
+    <link rel="stylesheet" href="css/styles.css?v=1.0.4">
 </head>
 <body>
     <div id="app">
         <h1>Sprachassistent</h1>
-        <div id="version">v1.0.3</div>
+        <div id="version">v1.0.4</div>
         <div id="status">Initialisiere...</div>
         <button id="start-btn">Mikrofon aktivieren</button>
         <div id="transcript"></div>
@@ -21,10 +21,32 @@
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"
             onerror="this.src='/assets/local/ort.js'"></script>
 
-    <!-- VAD Library mit lokalem Fallback -->
+    <!-- VAD Library mit lokalem Fallback - mit onload Handler -->
     <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad/dist/index.browser.js"
-            onerror="this.src='/assets/local/vad.browser.js'"></script>
+            onerror="this.src='/assets/local/vad.browser.js'"
+            onload="console.log('VAD Library geladen:', typeof vad)"></script>
 
-    <script type="module" src="js/app.js?v=1.0.3"></script>
+    <!-- App erst laden, wenn VAD bereit ist -->
+    <script>
+        // Warte auf VAD-Bibliothek
+        function waitForVAD() {
+            if (typeof vad !== 'undefined' && vad.MicVAD) {
+                console.log('VAD ist bereit, lade App...');
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'js/app.js?v=1.0.4';
+                document.body.appendChild(script);
+            } else {
+                console.log('Warte auf VAD...');
+                setTimeout(waitForVAD, 100);
+            }
+        }
+        // Starte nach DOM-Load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', waitForVAD);
+        } else {
+            waitForVAD();
+        }
+    </script>
 </body>
 </html>
