@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprachassistent MVP v1.0.0</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Sprachassistent</h1>
+        <div id="version">v1.0.0</div>
+        <div id="status">Initialisiere...</div>
+        <button id="start-btn">Mikrofon aktivieren</button>
+        <div id="transcript"></div>
+        <div id="response"></div>
+        <div id="debug"></div>
+    </div>
+
+    <!-- ONNX Runtime Web mit lokalem Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"
+            onerror="this.src='/assets/local/ort.js'"></script>
+
+    <!-- VAD Library mit lokalem Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad/dist/index.browser.js"
+            onerror="this.src='/assets/local/vad.browser.js'"></script>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
